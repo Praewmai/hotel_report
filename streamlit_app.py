@@ -84,7 +84,7 @@ div[data-testid="stTextInput"] label p, div[data-testid="stFileUploader"] label 
 /* Fix Input Box Visibility */
 div[data-baseweb="input"] {
     background-color: var(--background-color) !important;
-    border: 1px solid color-mix(in srgb, var(--text-color) 20%, transparent) !important;
+    border: 1px solid #94a3b8 !important; /* Visible gray border */
     border-radius: 12px !important;
 }
 div[data-baseweb="input"] > div {
