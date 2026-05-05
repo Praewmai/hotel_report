@@ -82,13 +82,20 @@ div[data-testid="stForm"] {
 div[data-testid="stTextInput"] label p { color: #cbd5e1 !important; font-weight: 600 !important; text-align: left; }
 div[data-testid="stFileUploader"] label p { color: #cbd5e1 !important; font-weight: 600 !important; text-align: left; }
 
-div[data-testid="stTextInput"] input {
-    background: rgba(255,255,255,0.04) !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
-    color: #ffffff !important;
+/* Fix Input Box Visibility */
+div[data-baseweb="input"] {
+    background-color: #0f2040 !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
     border-radius: 12px !important;
 }
-div[data-testid="stTextInput"] input:focus {
+div[data-baseweb="input"] > div {
+    background-color: transparent !important;
+}
+div[data-baseweb="input"] input {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+div[data-baseweb="input"]:focus-within {
     border-color: rgba(45,212,191,0.5) !important;
     box-shadow: 0 0 0 3px rgba(45,212,191,0.1) !important;
 }
@@ -143,10 +150,10 @@ div[data-testid="stAlert"] {
     background-color: rgba(255,255,255,0.05) !important;
 }
 
-/* Hide default streamlit elements */
-#MainMenu {visibility: hidden;}
+/* Show default streamlit elements so user can change theme */
+#MainMenu {visibility: visible;}
 footer {visibility: hidden;}
-header {visibility: hidden;}
+header {visibility: visible;}
 </style>
 
 <div class="bg-orbs">
