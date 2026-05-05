@@ -9,14 +9,161 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("🏨 Hotel Report Generator")
+# --- INJECT CUSTOM CSS FOR DARK GLASSMORPHISM THEME ---
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Override Streamlit Background */
+.stApp {
+    background-color: #050d1a !important;
+}
+
+/* Background Orbs */
+.bg-orbs {
+    position: fixed; inset: 0; pointer-events: none; z-index: -1; overflow: hidden;
+}
+.orb {
+    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.18;
+    animation: drift 20s ease-in-out infinite;
+}
+.orb-1 {
+    width: 600px; height: 600px; background: radial-gradient(circle, #1d4ed8, transparent);
+    top: -200px; left: -200px; animation-delay: 0s;
+}
+.orb-2 {
+    width: 500px; height: 500px; background: radial-gradient(circle, #0d9488, transparent);
+    bottom: -150px; right: -100px; animation-delay: -7s;
+}
+.orb-3 {
+    width: 350px; height: 350px; background: radial-gradient(circle, #6366f1, transparent);
+    top: 40%; left: 50%; animation-delay: -14s;
+}
+@keyframes drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(40px, -30px) scale(1.05); }
+    66% { transform: translate(-20px, 30px) scale(0.97); }
+}
+
+/* Header Text */
+h1 {
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    text-align: center;
+}
+
+h1 span {
+    background: linear-gradient(135deg, #14b8a6, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stMarkdown p {
+    color: #94a3b8;
+    text-align: center;
+}
+
+/* Glassmorphism Form Container */
+div[data-testid="stForm"] {
+    background: rgba(10,22,40,0.7) !important;
+    border-radius: 20px !important;
+    padding: 30px !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    backdrop-filter: blur(20px) !important;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.02), 0 24px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+
+/* Inputs & Labels */
+div[data-testid="stTextInput"] label p { color: #cbd5e1 !important; font-weight: 600 !important; text-align: left; }
+div[data-testid="stFileUploader"] label p { color: #cbd5e1 !important; font-weight: 600 !important; text-align: left; }
+
+div[data-testid="stTextInput"] input {
+    background: rgba(255,255,255,0.04) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    color: #ffffff !important;
+    border-radius: 12px !important;
+}
+div[data-testid="stTextInput"] input:focus {
+    border-color: rgba(45,212,191,0.5) !important;
+    box-shadow: 0 0 0 3px rgba(45,212,191,0.1) !important;
+}
+
+/* File Uploader Box */
+section[data-testid="stFileUploadDropzone"] {
+    background: rgba(255,255,255,0.02) !important;
+    border: 1.5px dashed rgba(255,255,255,0.1) !important;
+    border-radius: 14px !important;
+    color: #cbd5e1 !important;
+}
+section[data-testid="stFileUploadDropzone"]:hover {
+    border-color: rgba(45,212,191,0.5) !important;
+    background: rgba(45,212,191,0.04) !important;
+}
+
+/* Form Submit Button */
+div[data-testid="stFormSubmitButton"] button {
+    width: 100% !important;
+    background: linear-gradient(135deg, #0d9488, #2563eb) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    padding: 10px !important;
+    transition: all 0.25s !important;
+    box-shadow: 0 4px 20px rgba(13,148,136,0.35) !important;
+}
+div[data-testid="stFormSubmitButton"] button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 30px rgba(13,148,136,0.45), 0 2px 8px rgba(0,0,0,0.3) !important;
+}
+div[data-testid="stFormSubmitButton"] button p {
+    color: #ffffff !important;
+}
+
+/* Download Button */
+div[data-testid="stDownloadButton"] button {
+    width: 100% !important;
+    background: rgba(16,185,129,0.1) !important;
+    color: #10b981 !important;
+    border: 1px solid rgba(16,185,129,0.3) !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+}
+
+/* Success / Error messages */
+div[data-testid="stAlert"] {
+    border-radius: 12px !important;
+    background-color: rgba(255,255,255,0.05) !important;
+}
+
+/* Hide default streamlit elements */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+</style>
+
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("<h1>Hotel Report <span>Generator</span></h1>", unsafe_allow_html=True)
 st.markdown("อัปโหลดไฟล์ Raw Data (Excel) จากระบบเพื่อสร้าง Report สรุปข้อมูลอัตโนมัติ")
 
 with st.form("report_form"):
     hotel_name = st.text_input("ชื่อโรงแรม", placeholder="เช่น My Hotel Resort & Spa")
     uploaded_file = st.file_uploader("เลือกไฟล์ Raw Data (.xlsx)", type=['xlsx'])
     
-    submitted = st.form_submit_button("สร้าง Report", type="primary")
+    submitted = st.form_submit_button("✨ สร้าง Report")
 
 if submitted:
     if not hotel_name.strip():
@@ -26,7 +173,6 @@ if submitted:
     else:
         with st.spinner('กำลังประมวลผลข้อมูล...'):
             try:
-                # สร้างโฟลเดอร์ชั่วคราว
                 os.makedirs('/tmp/hotel_uploads', exist_ok=True)
                 os.makedirs('/tmp/hotel_outputs', exist_ok=True)
                 
@@ -34,16 +180,13 @@ if submitted:
                 input_path = f"/tmp/hotel_uploads/{uid}_input.xlsx"
                 output_path = f"/tmp/hotel_outputs/{uid}_report.xlsx"
                 
-                # บันทึกไฟล์ที่อัปโหลด
                 with open(input_path, "wb") as f:
                     f.write(uploaded_file.getbuffer())
                 
-                # เรียกใช้ฟังก์ชันประมวลผล
                 generate_report(input_path, hotel_name, output_path)
                 
                 st.success("✅ สร้าง Report สำเร็จแล้ว!")
                 
-                # ปุ่มดาวน์โหลด
                 safe_name = hotel_name.replace(' ', '_')
                 with open(output_path, "rb") as file:
                     btn = st.download_button(
@@ -54,9 +197,7 @@ if submitted:
                     )
             except Exception as e:
                 st.error(f"❌ เกิดข้อผิดพลาดในการประมวลผล: {str(e)}")
-                
             finally:
-                # ทำความสะอาดไฟล์
                 if os.path.exists(input_path):
                     try:
                         os.remove(input_path)
