@@ -18,17 +18,13 @@ html, body, [class*="css"] {
     font-family: 'Inter', sans-serif;
 }
 
-/* Override Streamlit Background */
-.stApp {
-    background-color: #050d1a !important;
-}
-
-/* Background Orbs */
+/* Background Orbs (works for both light and dark) */
 .bg-orbs {
     position: fixed; inset: 0; pointer-events: none; z-index: -1; overflow: hidden;
 }
 .orb {
-    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.18;
+    position: absolute; border-radius: 50%; filter: blur(80px); 
+    opacity: 0.15; /* subtle in both modes */
     animation: drift 20s ease-in-out infinite;
 }
 .orb-1 {
@@ -53,8 +49,8 @@ html, body, [class*="css"] {
 h1 {
     font-family: 'Space Grotesk', sans-serif !important;
     font-weight: 700 !important;
-    color: #ffffff !important;
     text-align: center;
+    color: var(--text-color) !important;
 }
 
 h1 span {
@@ -64,52 +60,55 @@ h1 span {
 }
 
 .stMarkdown p {
-    color: #94a3b8;
     text-align: center;
+    color: color-mix(in srgb, var(--text-color) 70%, transparent);
 }
 
 /* Glassmorphism Form Container */
 div[data-testid="stForm"] {
-    background: rgba(10,22,40,0.7) !important;
+    background: color-mix(in srgb, var(--secondary-background-color) 70%, transparent) !important;
     border-radius: 20px !important;
     padding: 30px !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
+    border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent) !important;
     backdrop-filter: blur(20px) !important;
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.02), 0 24px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+    box-shadow: 0 10px 40px color-mix(in srgb, var(--text-color) 5%, transparent) !important;
 }
 
 /* Inputs & Labels */
-div[data-testid="stTextInput"] label p { color: #cbd5e1 !important; font-weight: 600 !important; text-align: left; }
-div[data-testid="stFileUploader"] label p { color: #cbd5e1 !important; font-weight: 600 !important; text-align: left; }
+div[data-testid="stTextInput"] label p, div[data-testid="stFileUploader"] label p { 
+    color: var(--text-color) !important; 
+    font-weight: 600 !important; 
+    text-align: left; 
+}
 
 /* Fix Input Box Visibility */
 div[data-baseweb="input"] {
-    background-color: #0f2040 !important;
-    border: 1px solid rgba(255,255,255,0.2) !important;
+    background-color: var(--background-color) !important;
+    border: 1px solid color-mix(in srgb, var(--text-color) 20%, transparent) !important;
     border-radius: 12px !important;
 }
 div[data-baseweb="input"] > div {
     background-color: transparent !important;
 }
 div[data-baseweb="input"] input {
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
+    color: var(--text-color) !important;
+    -webkit-text-fill-color: var(--text-color) !important;
 }
 div[data-baseweb="input"]:focus-within {
-    border-color: rgba(45,212,191,0.5) !important;
-    box-shadow: 0 0 0 3px rgba(45,212,191,0.1) !important;
+    border-color: #2dd4bf !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, #2dd4bf 20%, transparent) !important;
 }
 
 /* File Uploader Box */
 section[data-testid="stFileUploadDropzone"] {
-    background: rgba(255,255,255,0.02) !important;
-    border: 1.5px dashed rgba(255,255,255,0.1) !important;
+    background-color: color-mix(in srgb, var(--background-color) 50%, transparent) !important;
+    border: 1.5px dashed color-mix(in srgb, var(--text-color) 20%, transparent) !important;
     border-radius: 14px !important;
-    color: #cbd5e1 !important;
+    color: var(--text-color) !important;
 }
 section[data-testid="stFileUploadDropzone"]:hover {
-    border-color: rgba(45,212,191,0.5) !important;
-    background: rgba(45,212,191,0.04) !important;
+    border-color: #2dd4bf !important;
+    background-color: color-mix(in srgb, #2dd4bf 10%, transparent) !important;
 }
 
 /* Form Submit Button */
@@ -124,11 +123,11 @@ div[data-testid="stFormSubmitButton"] button {
     font-weight: 600 !important;
     padding: 10px !important;
     transition: all 0.25s !important;
-    box-shadow: 0 4px 20px rgba(13,148,136,0.35) !important;
+    box-shadow: 0 4px 15px color-mix(in srgb, #0d9488 40%, transparent) !important;
 }
 div[data-testid="stFormSubmitButton"] button:hover {
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 30px rgba(13,148,136,0.45), 0 2px 8px rgba(0,0,0,0.3) !important;
+    box-shadow: 0 8px 25px color-mix(in srgb, #0d9488 60%, transparent) !important;
 }
 div[data-testid="stFormSubmitButton"] button p {
     color: #ffffff !important;
@@ -137,9 +136,9 @@ div[data-testid="stFormSubmitButton"] button p {
 /* Download Button */
 div[data-testid="stDownloadButton"] button {
     width: 100% !important;
-    background: rgba(16,185,129,0.1) !important;
+    background: color-mix(in srgb, #10b981 10%, transparent) !important;
     color: #10b981 !important;
-    border: 1px solid rgba(16,185,129,0.3) !important;
+    border: 1px solid color-mix(in srgb, #10b981 30%, transparent) !important;
     border-radius: 12px !important;
     font-weight: 600 !important;
 }
@@ -147,7 +146,7 @@ div[data-testid="stDownloadButton"] button {
 /* Success / Error messages */
 div[data-testid="stAlert"] {
     border-radius: 12px !important;
-    background-color: rgba(255,255,255,0.05) !important;
+    background-color: color-mix(in srgb, var(--text-color) 5%, transparent) !important;
 }
 
 /* Show default streamlit elements so user can change theme */
