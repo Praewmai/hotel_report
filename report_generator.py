@@ -236,6 +236,7 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str):
         chart.x_axis.delete = False
         chart.y_axis.delete = False
         for s in chart.series:
+            s.smooth = False
             lbl = DataLabelList()
             lbl.showVal        = True
             lbl.showCatName    = False
@@ -334,6 +335,7 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str):
         chart.x_axis.delete = False
         chart.y_axis.delete = False
         for s in chart.series:
+            s.smooth = False
             lbl = DataLabelList()
             lbl.showVal        = True
             lbl.showCatName    = False
