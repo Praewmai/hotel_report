@@ -1,5 +1,6 @@
 import pandas as pd
 import openpyxl
+from datetime import datetime
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.chart import LineChart, BarChart, Reference
 from openpyxl.drawing.text import (RichTextProperties, ListStyle, Paragraph,
@@ -13,7 +14,9 @@ import os
 MONTHS = {1:'January',2:'February',3:'March',4:'April',5:'May',6:'June',
           7:'July',8:'August',9:'September',10:'October',11:'November',12:'December'}
 
-UPDATE_DATE = 'update 24 Apr 26'
+def get_update_date():
+    """Generate 'update DD Mon YY' string from today's date"""
+    return datetime.now().strftime('update %d %b %y')
 
 TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), 'report_templates')
 
@@ -221,7 +224,7 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
     c.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
 
     c = ws_report['AA4']
-    c.value = UPDATE_DATE
+    c.value = get_update_date()
     c.font = f_update
 
     left_row = 7
@@ -318,7 +321,7 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
     c.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
 
     c = ws_cost['O8']
-    c.value = UPDATE_DATE; c.font = f_update
+    c.value = get_update_date(); c.font = f_update
     c.alignment = Alignment(horizontal='right')
 
     hdr_cols = {
