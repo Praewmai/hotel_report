@@ -212,10 +212,11 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
     ws_report = wb.active; ws_report.title = 'report'
     ws_cost = wb.create_sheet('cost')
 
-    for col, dim in tmpl['report'].column_dimensions.items():
+    for col, dim in tmpl.worksheets[0].column_dimensions.items():
         ws_report.column_dimensions[col].width = dim.width
-    for col, dim in tmpl['cost'].column_dimensions.items():
-        ws_cost.column_dimensions[col].width = dim.width
+    if len(tmpl.worksheets) > 1:
+        for col, dim in tmpl.worksheets[1].column_dimensions.items():
+            ws_cost.column_dimensions[col].width = dim.width
 
     # ----- REPORT SHEET -----
     c = ws_report['L3']
