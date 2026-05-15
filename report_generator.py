@@ -163,7 +163,13 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
         ydf = df[df['Year']==year]
         summary = ydf.groupby(['Type','RoomName'])['TotalNights'].sum()
         rows = []
-        for t in ['room','adult_extra','chd_shared','chd_extra','other_fee']:
+        
+        # Filter types based on template
+        allowed_types = ['room','adult_extra','chd_shared','chd_extra','other_fee']
+        if template_name == 'room_only':
+            allowed_types = ['room']
+            
+        for t in allowed_types:
             if t in summary.index.get_level_values(0):
                 for name, nights in summary[t].sort_values(ascending=False).items():
                     rows.append((t, name, int(nights)))
@@ -235,6 +241,10 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
         months = monthly_data[year]
         has_shared = any(v[1] for v in months.values())
         has_extra  = any(v[2] for v in months.values())
+        
+        if template_name == 'room_only':
+            has_shared = False
+            has_extra = False
         header_row = left_row
 
         yc = ws_report.cell(left_row, 1)
