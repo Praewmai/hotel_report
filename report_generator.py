@@ -224,6 +224,11 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
         for col, dim in tmpl.worksheets[1].column_dimensions.items():
             ws_cost.column_dimensions[col].width = dim.width
 
+    # Enforce width for Room Name column and wrap text
+    ws_report.column_dimensions[openpyxl.utils.cell.get_column_letter(ROOM_COL)].width = 50
+    ws_report.column_dimensions['L'].width = 50 # Expand Hotel Name column in report
+    ws_cost.column_dimensions['E'].width = 50   # Expand Hotel Name column in cost
+
     # ----- REPORT SHEET -----
     c = ws_report['L3']
     c.value = hotel_name
@@ -290,7 +295,12 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
         
         chart.x_axis.delete = False
         chart.y_axis.delete = False
-        for s in chart.series:
+        
+        # Consistent colors: 0:Total(Blue), 1:Shared(Green), 2:Extra(Orange)
+        series_colors = ['2E75B6', '70AD47', 'ED7D31']
+        for i, s in enumerate(chart.series):
+            s.graphicalProperties.line.solidFill = series_colors[i % len(series_colors)]
+            s.graphicalProperties.line.width = 25000
             s.smooth = False
             lbl = DataLabelList()
             lbl.showVal        = True
@@ -319,7 +329,7 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
         for rtype, name, nights in rooms_data[year]:
             c1 = ws_report.cell(room_excel_row, ROOM_COL)
             c2 = ws_report.cell(room_excel_row, ROOM_COL+1)
-            c1.value = name; c1.font = f_data; c1.border = thin()
+            c1.value = name; c1.font = f_data; c1.border = thin(); c1.alignment = Alignment(wrap_text=True)
             c2.value = nights; c2.font = f_data; c2.alignment = al_c; c2.border = thin()
             room_excel_row += 1
 
@@ -372,42 +382,43 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
                 c.number_format = '0.00'
 
     # 3 Line charts in cost sheet (same format as report sheet)
-    data_row_end = 10 + len(years)
-    CHART_START_ROW = 17
-    for title, data_col, color, chart_col, is_cost in [
-        ('Total Nights per Year', 6, '2E75B6', 4,  False),
-        ('Total VC per Year',     5, '70AD47', 13, False),
-        ('Total Cost per Year',   7, 'ED7D31', 22, True),
-    ]:
-        chart = LineChart(); chart.title=title; chart.style=10
-        chart.width=10; chart.height=8; chart.legend=None
-        chart.add_data(Reference(ws_cost,min_col=data_col,min_row=10,max_row=data_row_end),
-                       titles_from_data=True)
-        chart.set_categories(Reference(ws_cost,min_col=4,min_row=11,max_row=data_row_end))
-        chart.series[0].graphicalProperties.line.solidFill = color
-        chart.series[0].graphicalProperties.line.width = 25000
-        
-        chart.x_axis.delete = False
-        chart.y_axis.delete = False
-        for s in chart.series:
-            s.smooth = False
-            lbl = DataLabelList()
-            lbl.showVal        = True
-            lbl.showCatName    = False
-            lbl.showSerName    = False
-            lbl.showLegendKey  = False
-            lbl.showPercent    = False
-            lbl.showBubbleSize = False
-            if is_cost:
-                lbl.numFmt = '#,##0.00'
-                lbl.sourceLinked = False
-            s.dLbls = lbl
-        
-        anchor = TwoCellAnchor()
-        anchor._from = AnchorMarker(col=chart_col, colOff=0, row=CHART_START_ROW, rowOff=0)
-        anchor.to    = AnchorMarker(col=chart_col+8, colOff=0, row=CHART_START_ROW+18, rowOff=0)
-        chart.anchor = anchor
-        ws_cost.add_chart(chart)
+    if template_name != 'room_only':
+        data_row_end = 10 + len(years)
+        CHART_START_ROW = 17
+        for title, data_col, color, chart_col, is_cost in [
+            ('Total Nights per Year', 6, '2E75B6', 4,  False),
+            ('Total VC per Year',     5, '70AD47', 13, False),
+            ('Total Cost per Year',   7, 'ED7D31', 22, True),
+        ]:
+            chart = LineChart(); chart.title=title; chart.style=10
+            chart.width=10; chart.height=8; chart.legend=None
+            chart.add_data(Reference(ws_cost,min_col=data_col,min_row=10,max_row=data_row_end),
+                           titles_from_data=True)
+            chart.set_categories(Reference(ws_cost,min_col=4,min_row=11,max_row=data_row_end))
+            chart.series[0].graphicalProperties.line.solidFill = color
+            chart.series[0].graphicalProperties.line.width = 25000
+            
+            chart.x_axis.delete = False
+            chart.y_axis.delete = False
+            for s in chart.series:
+                s.smooth = False
+                lbl = DataLabelList()
+                lbl.showVal        = True
+                lbl.showCatName    = False
+                lbl.showSerName    = False
+                lbl.showLegendKey  = False
+                lbl.showPercent    = False
+                lbl.showBubbleSize = False
+                if is_cost:
+                    lbl.numFmt = '#,##0.00'
+                    lbl.sourceLinked = False
+                s.dLbls = lbl
+            
+            anchor = TwoCellAnchor()
+            anchor._from = AnchorMarker(col=chart_col, colOff=0, row=CHART_START_ROW, rowOff=0)
+            anchor.to    = AnchorMarker(col=chart_col+8, colOff=0, row=CHART_START_ROW+18, rowOff=0)
+            chart.anchor = anchor
+            ws_cost.add_chart(chart)
 
     wb.save(output_path)
     return output_path
