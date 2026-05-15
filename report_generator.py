@@ -298,9 +298,6 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
         chart.y_axis.delete = False
         chart.legend = None # Remove legend to match reference image
         
-        # Plot area background (Gray)
-        chart.plot_area.graphicalProperties = GraphicalProperties(solidFill="EAEAEA")
-        
         # Consistent colors: 0:Total(Gold), 1:Shared(Green), 2:Extra(Orange)
         series_colors = ['FFC000', '70AD47', 'ED7D31']
         for i, s in enumerate(chart.series):
