@@ -10,7 +10,6 @@ from openpyxl.chart.title import Title
 from openpyxl.drawing.spreadsheet_drawing import AnchorMarker, TwoCellAnchor
 from openpyxl.chart.label import DataLabelList
 from openpyxl.chart.shapes import GraphicalProperties
-from openpyxl.drawing.fill import SolidFillProperties
 import os
 
 MONTHS = {1:'JANUARY',2:'FEBRUARY',3:'MARCH',4:'APRIL',5:'MAY',6:'JUNE',
