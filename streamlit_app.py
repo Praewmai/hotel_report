@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import uuid
-from report_generator import generate_report
+from report_generator import generate_report, TEMPLATES, DEFAULT_TEMPLATE
 
 st.set_page_config(
     page_title="Hotel Report Generator",
@@ -133,6 +133,21 @@ div[data-testid="stFormSubmitButton"] button p {
     color: #ffffff !important;
 }
 
+/* Template selectbox */
+div[data-testid="stSelectbox"] label p {
+    color: var(--text-color) !important;
+    font-weight: 600 !important;
+    text-align: left;
+}
+div[data-baseweb="select"] {
+    border-radius: 12px !important;
+    border: 1px solid #94a3b8 !important;
+}
+div[data-baseweb="select"]:focus-within {
+    border-color: #2dd4bf !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, #2dd4bf 20%, transparent) !important;
+}
+
 /* Download Button */
 div[data-testid="stDownloadButton"] button {
     width: 100% !important;
@@ -165,10 +180,25 @@ header {visibility: visible;}
 st.markdown("<h1>Hotel Report <span>Generator</span></h1>", unsafe_allow_html=True)
 st.markdown("อัปโหลดไฟล์ Raw Data (Excel) จากระบบเพื่อสร้าง Report สรุปข้อมูลอัตโนมัติ")
 
+# Build template options for selectbox
+_template_options = list(TEMPLATES.keys())
+_template_labels  = {k: v['name'] for k, v in TEMPLATES.items()}
+_template_descs   = {k: v['description'] for k, v in TEMPLATES.items()}
+
 with st.form("report_form"):
     hotel_name = st.text_input("ชื่อโรงแรม", placeholder="เช่น My Hotel Resort & Spa")
     uploaded_file = st.file_uploader("เลือกไฟล์ Raw Data (.xlsx)", type=['xlsx'])
-    
+
+    selected_template = st.selectbox(
+        "รูปแบบ Report (Template)",
+        options=_template_options,
+        format_func=lambda k: _template_labels[k],
+        index=_template_options.index(DEFAULT_TEMPLATE) if DEFAULT_TEMPLATE in _template_options else 0,
+        help="เลือก template สำหรับไฟล์ Excel ที่จะสร้าง"
+    )
+    # Show description of selected template
+    st.caption(f"ℹ️ {_template_descs.get(selected_template, '')}")
+
     submitted = st.form_submit_button("✨ สร้าง Report")
 
 if submitted:
@@ -189,7 +219,7 @@ if submitted:
                 with open(input_path, "wb") as f:
                     f.write(uploaded_file.getbuffer())
                 
-                generate_report(input_path, hotel_name, output_path)
+                generate_report(input_path, hotel_name, output_path, template_name=selected_template)
                 
                 st.success("✅ สร้าง Report สำเร็จแล้ว!")
                 
