@@ -9,10 +9,12 @@ from openpyxl.chart.text import RichText as ChartRichText, Text
 from openpyxl.chart.title import Title
 from openpyxl.drawing.spreadsheet_drawing import AnchorMarker, TwoCellAnchor
 from openpyxl.chart.label import DataLabelList
+from openpyxl.chart.shapes import GraphicalProperties
+from openpyxl.drawing.fill import SolidFillProperties
 import os
 
-MONTHS = {1:'January',2:'February',3:'March',4:'April',5:'May',6:'June',
-          7:'July',8:'August',9:'September',10:'October',11:'November',12:'December'}
+MONTHS = {1:'JANUARY',2:'FEBRUARY',3:'MARCH',4:'APRIL',5:'MAY',6:'JUNE',
+          7:'JULY',8:'AUGUST',9:'SEPTEMBER',10:'OCTOBER',11:'NOVEMBER',12:'DECEMBER'}
 
 def get_update_date():
     """Generate 'update DD Mon YY' string from today's date"""
@@ -295,13 +297,19 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
         
         chart.x_axis.delete = False
         chart.y_axis.delete = False
+        chart.legend = None # Remove legend to match reference image
         
-        # Consistent colors: 0:Total(Blue), 1:Shared(Green), 2:Extra(Orange)
-        series_colors = ['2E75B6', '70AD47', 'ED7D31']
+        # Plot area background (Gray)
+        chart.plot_area.graphicalProperties = GraphicalProperties(solidFill="EAEAEA")
+        
+        # Consistent colors: 0:Total(Gold), 1:Shared(Green), 2:Extra(Orange)
+        series_colors = ['FFC000', '70AD47', 'ED7D31']
         for i, s in enumerate(chart.series):
             s.graphicalProperties.line.solidFill = series_colors[i % len(series_colors)]
-            s.graphicalProperties.line.width = 25000
+            s.graphicalProperties.line.width = 25000 # ~2pt
             s.smooth = False
+            
+            # Data Labels
             lbl = DataLabelList()
             lbl.showVal        = True
             lbl.showCatName    = False
@@ -309,6 +317,8 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
             lbl.showLegendKey  = False
             lbl.showPercent    = False
             lbl.showBubbleSize = False
+            # Position labels on top
+            lbl.dLblPos        = 't'
             s.dLbls = lbl
         
         anchor = TwoCellAnchor()
