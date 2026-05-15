@@ -1,7 +1,7 @@
 import os
 import uuid
 from flask import Flask, request, render_template, send_file, jsonify
-from report_generator import generate_report
+from report_generator import generate_report, TEMPLATES, DEFAULT_TEMPLATE
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
@@ -23,7 +23,10 @@ def generate():
         return jsonify({'error': 'ไม่พบไฟล์'}), 400
 
     file = request.files['file']
-    hotel_name = request.form.get('hotel_name', '').strip()
+    hotel_name    = request.form.get('hotel_name', '').strip()
+    template_name = request.form.get('template_name', DEFAULT_TEMPLATE).strip()
+    if template_name not in TEMPLATES:
+        template_name = DEFAULT_TEMPLATE
 
     if not file.filename:
         return jsonify({'error': 'กรุณาเลือกไฟล์'}), 400
@@ -39,7 +42,7 @@ def generate():
     file.save(input_path)
 
     try:
-        generate_report(input_path, hotel_name, output_path)
+        generate_report(input_path, hotel_name, output_path, template_name=template_name)
     except Exception as e:
         return jsonify({'error': f'เกิดข้อผิดพลาด: {str(e)}'}), 500
     finally:
