@@ -181,26 +181,17 @@ html, body, [class*="css"] {
     text-transform: uppercase;
 }
 
-/* ── Card Container ── */
-.card {
-    background: rgba(15, 23, 42, 0.75);
-    border: 1px solid rgba(99,102,241,0.18);
-    border-radius: 20px;
-    padding: 2rem 2rem 1.5rem;
-    backdrop-filter: blur(24px);
+div[data-testid="stForm"] {
+    background: rgba(15, 23, 42, 0.75) !important;
+    border: 1px solid rgba(99,102,241,0.18) !important;
+    border-radius: 20px !important;
+    padding: 2rem 2rem 1.5rem !important;
+    backdrop-filter: blur(24px) !important;
     box-shadow:
         0 4px 6px rgba(0,0,0,0.2),
         0 20px 60px rgba(0,0,0,0.35),
-        inset 0 1px 0 rgba(255,255,255,0.05);
-    margin-bottom: 1.25rem;
-}
-
-/* ── Form inputs override ── */
-div[data-testid="stForm"] {
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    box-shadow: none !important;
+        inset 0 1px 0 rgba(255,255,255,0.05) !important;
+    margin-bottom: 1.25rem !important;
 }
 
 div[data-testid="stTextInput"] label p,
@@ -433,7 +424,6 @@ _template_descs   = {k: v['description'] for k, v in TEMPLATES.items()}
 # ─────────────────────────────────────────────
 # MAIN FORM CARD
 # ─────────────────────────────────────────────
-st.markdown('<div class="card">', unsafe_allow_html=True)
 
 with st.form("report_form"):
 
