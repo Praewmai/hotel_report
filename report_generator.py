@@ -15,7 +15,34 @@ MONTHS = {1:'January',2:'February',3:'March',4:'April',5:'May',6:'June',
 
 UPDATE_DATE = 'update 24 Apr 26'
 
-TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), 'template.xlsx')
+TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), 'report_templates')
+
+# ────────────────────────────────────────────────────────────
+# TEMPLATE REGISTRY
+# เพิ่ม template ใหม่ได้โดยวางไฟล์ .xlsx ใน report_templates/
+# แล้วเพิ่ม entry ที่นี่ในรูปแบบ:
+#   'key': {'name': 'ชื่อที่แสดงใน UI', 'file': 'ชื่อไฟล์.xlsx'}
+# ────────────────────────────────────────────────────────────
+TEMPLATES = {
+    'room_and_extra': {
+        'name': '🛏️ Room and Extra Bed',
+        'file': 'template_Room and Extra Bed.xlsx',
+        'description': 'รายงานที่มีข้อมูลห้องพักและ Extra Bed (เตียงเสริม) ครบถ้วน'
+    },
+    'room_only': {
+        'name': '🏨 Room Only',
+        'file': 'template_Room Only.xlsx',
+        'description': 'รายงานเฉพาะห้องพัก ไม่รวม Extra Bed'
+    },
+    # ── เพิ่ม template ใหม่ด้านล่างนี้ ──
+    # 'template3': {
+    #     'name': '📋 ชื่อ Template ใหม่',
+    #     'file': 'template_ชื่อไฟล์.xlsx',
+    #     'description': 'คำอธิบาย template'
+    # },
+}
+
+DEFAULT_TEMPLATE = 'room_and_extra'
 
 
 def classify(d):
@@ -76,8 +103,22 @@ def make_chart_title(year, total_nights):
     return Title(tx=Text(rich=rt), overlay=False)
 
 
-def generate_report(raw_path: str, hotel_name: str, output_path: str):
-    """Main function: raw Excel → formatted report Excel"""
+def generate_report(raw_path: str, hotel_name: str, output_path: str, template_name: str = DEFAULT_TEMPLATE):
+    """Main function: raw Excel → formatted report Excel
+    
+    Args:
+        raw_path: path to raw input Excel
+        hotel_name: hotel name for report header
+        output_path: where to save the output Excel
+        template_name: key from TEMPLATES dict (default: 'standard')
+    """
+    # Resolve template path
+    if template_name not in TEMPLATES:
+        template_name = DEFAULT_TEMPLATE
+    template_file = TEMPLATES[template_name]['file']
+    template_path = os.path.join(TEMPLATES_DIR, template_file)
+    if not os.path.exists(template_path):
+        raise FileNotFoundError(f"ไม่พบไฟล์ template: {template_file} (ตรวจสอบโฟลเดอร์ report_templates/)")
 
     # Load raw data
     df = pd.read_excel(raw_path, header=3)
@@ -163,7 +204,7 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str):
     al_cc = Alignment(horizontal='center', vertical='center', wrap_text=True)
     al_c  = Alignment(horizontal='center')
 
-    tmpl = openpyxl.load_workbook(TEMPLATE_PATH)
+    tmpl = openpyxl.load_workbook(template_path)
     wb = openpyxl.Workbook()
     ws_report = wb.active; ws_report.title = 'report'
     ws_cost = wb.create_sheet('cost')
