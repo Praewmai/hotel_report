@@ -246,25 +246,34 @@ div[data-baseweb="input"]:focus-within {
 }
 
 /* ── File Uploader ── */
-[data-testid="stFileUploadDropzone"] {
+[data-testid="stFileUploader"],
+[data-testid="stFileUploader"] > section,
+[data-testid="stFileUploadDropzone"],
+[data-testid="stFileUploaderDropzone"] {
     background: rgba(252,228,236,0.4) !important;
     border: 2px dashed rgba(244,114,182,0.5) !important;
     border-radius: 16px !important;
     transition: all 0.25s ease !important;
 }
-[data-testid="stFileUploadDropzone"]:hover {
+[data-testid="stFileUploadDropzone"]:hover,
+[data-testid="stFileUploaderDropzone"]:hover,
+[data-testid="stFileUploader"]:hover > section {
     border-color: #f472b6 !important;
     background: rgba(252,228,236,0.6) !important;
     box-shadow: 0 0 20px rgba(244,114,182,0.1) !important;
 }
-[data-testid="stFileUploadDropzone"] p,
-[data-testid="stFileUploadDropzone"] span {
+[data-testid="stFileUploader"] p,
+[data-testid="stFileUploader"] span,
+[data-testid="stFileUploaderDropzone"] p,
+[data-testid="stFileUploaderDropzone"] span {
     color: #8b5e87 !important;
 }
-[data-testid="stFileUploadDropzone"] small {
+[data-testid="stFileUploader"] small,
+[data-testid="stFileUploaderDropzone"] small {
     color: #b0879e !important;
 }
-[data-testid="stFileUploadDropzone"] button {
+[data-testid="stFileUploader"] button,
+[data-testid="stFileUploaderDropzone"] button {
     color: #c2185b !important;
     background: rgba(244,114,182,0.15) !important;
     border: 1px solid rgba(244,114,182,0.4) !important;
@@ -272,16 +281,25 @@ div[data-baseweb="input"]:focus-within {
 }
 
 /* ── Uploaded File Item ── */
+div[data-testid="stFileUploader"] > div:last-child,
+div[data-testid="stFileUploaderFileData"],
 [data-testid="stUploadedFile"] {
-    background: rgba(255,255,255,0.8) !important;
+    background: rgba(255,255,255,0.9) !important;
     border: 1px solid rgba(244,114,182,0.3) !important;
     border-radius: 12px !important;
+    padding: 0.5rem !important;
+    margin-top: 0.5rem !important;
 }
+div[data-testid="stFileUploader"] > div:last-child div,
+div[data-testid="stFileUploader"] > div:last-child span,
+div[data-testid="stFileUploader"] > div:last-child p,
 [data-testid="stUploadedFile"] div, 
 [data-testid="stUploadedFile"] span, 
 [data-testid="stUploadedFile"] p {
     color: #4a3347 !important;
+    text-shadow: none !important;
 }
+div[data-testid="stFileUploader"] > div:last-child svg,
 [data-testid="stUploadedFile"] svg {
     stroke: #f472b6 !important;
 }
