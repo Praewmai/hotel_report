@@ -1,61 +1,72 @@
 import streamlit as st
 import os
 import uuid
+import base64
 from report_generator import generate_report, TEMPLATES, DEFAULT_TEMPLATE
 
 st.set_page_config(
-    page_title="Hotel Report Generator",
-    page_icon="🏨",
+    page_title="Hotel Report Generator 🐱",
+    page_icon="🐱",
     layout="centered"
 )
 
 # ─────────────────────────────────────────────
-# PREMIUM DARK DESIGN — Full CSS Injection
+# Load cat mascot as base64 for embedding
+# ─────────────────────────────────────────────
+CAT_IMG_B64 = ""
+_cat_path = os.path.join(os.path.dirname(__file__), "static", "cat_mascot.png")
+if os.path.exists(_cat_path):
+    with open(_cat_path, "rb") as _f:
+        CAT_IMG_B64 = base64.b64encode(_f.read()).decode()
+
+# ─────────────────────────────────────────────
+# 🐱 CUTE CAT LIGHT THEME — Full CSS Injection
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap');
 
 /* ── Reset & Base ── */
 html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Nunito', sans-serif;
 }
 
-/* ── Animated Mesh Gradient Background ── */
+/* ── Warm Light Background with paw print pattern ── */
 [data-testid="stAppViewContainer"] {
-    background: #080c14 !important;
+    background: #fffbfe !important;
     min-height: 100vh;
 }
 [data-testid="stAppViewContainer"]::before {
-    content: '';
+    content: '🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾  🐾';
     position: fixed;
     inset: 0;
-    background:
-        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(99,102,241,0.18) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(13,148,136,0.16) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(59,130,246,0.10) 0%, transparent 70%);
+    font-size: 18px;
+    letter-spacing: 30px;
+    line-height: 55px;
+    word-spacing: 20px;
+    opacity: 0.06;
     pointer-events: none;
     z-index: 0;
-    animation: meshShift 18s ease-in-out infinite alternate;
-}
-@keyframes meshShift {
-    0%   { opacity: 1; filter: hue-rotate(0deg); }
-    100% { opacity: 0.85; filter: hue-rotate(20deg); }
+    overflow: hidden;
+    color: #e91e8c;
 }
 
-/* ── Stars / Particle dots ── */
+/* ── Soft floating gradient blobs ── */
 [data-testid="stAppViewContainer"]::after {
     content: '';
     position: fixed;
     inset: 0;
-    background-image:
-        radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px),
-        radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
-    background-size: 120px 120px, 60px 60px;
-    background-position: 0 0, 30px 30px;
+    background:
+        radial-gradient(ellipse 50% 40% at 15% 20%, rgba(251,146,191,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 35% at 85% 75%, rgba(196,142,255,0.10) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(255,183,127,0.08) 0%, transparent 70%);
     pointer-events: none;
     z-index: 0;
-    opacity: 0.3;
+    animation: blobFloat 20s ease-in-out infinite alternate;
+}
+@keyframes blobFloat {
+    0%   { opacity: 1; }
+    100% { opacity: 0.7; }
 }
 
 [data-testid="stMain"] {
@@ -73,85 +84,84 @@ html, body, [class*="css"] {
 /* ── Hero Section ── */
 .hero-wrapper {
     text-align: center;
-    padding: 2.5rem 0 2rem;
+    padding: 2rem 0 1.5rem;
     position: relative;
 }
-.hero-icon-ring {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 88px; height: 88px;
-    border-radius: 26px;
-    background: linear-gradient(135deg, #1e3a5f 0%, #0f2544 100%);
+.cat-mascot {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fce4ec;
     box-shadow:
-        0 0 0 1px rgba(99,102,241,0.4),
-        0 0 40px rgba(99,102,241,0.25),
-        0 20px 60px rgba(0,0,0,0.5);
-    font-size: 42px;
-    margin-bottom: 1.25rem;
-    animation: float 4s ease-in-out infinite;
-    position: relative;
+        0 0 0 6px rgba(244,114,182,0.15),
+        0 12px 40px rgba(244,114,182,0.2);
+    animation: catBounce 3s ease-in-out infinite;
+    margin-bottom: 1rem;
 }
-.hero-icon-ring::after {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: 28px;
-    background: linear-gradient(135deg, rgba(99,102,241,0.6), rgba(13,148,136,0.6));
-    z-index: -1;
-    filter: blur(8px);
-    animation: glowPulse 3s ease-in-out infinite alternate;
+@keyframes catBounce {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    25% { transform: translateY(-6px) rotate(-2deg); }
+    75% { transform: translateY(-3px) rotate(2deg); }
 }
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-8px); }
-}
-@keyframes glowPulse {
-    0%   { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-
 .hero-badge {
     display: inline-block;
-    background: rgba(99,102,241,0.15);
-    border: 1px solid rgba(99,102,241,0.35);
-    color: #a5b4fc;
+    background: linear-gradient(135deg, #fce4ec, #f3e5f5);
+    border: 1px solid rgba(244,114,182,0.3);
+    color: #c2185b;
     font-size: 0.72rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    padding: 0.3rem 0.85rem;
+    padding: 0.35rem 1rem;
     border-radius: 100px;
     margin-bottom: 0.9rem;
 }
 .hero-title {
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
-    font-size: 2.6rem !important;
+    font-family: 'Quicksand', sans-serif !important;
+    font-size: 2.5rem !important;
     font-weight: 800 !important;
-    line-height: 1.15 !important;
-    color: #f1f5f9 !important;
-    margin: 0 0 0.6rem !important;
-    letter-spacing: -0.03em;
+    line-height: 1.2 !important;
+    color: #4a3347 !important;
+    margin: 0 0 0.5rem !important;
+    letter-spacing: -0.02em;
 }
 .hero-title .grad {
-    background: linear-gradient(135deg, #38bdf8, #818cf8, #34d399);
+    background: linear-gradient(135deg, #f472b6, #c084fc, #fb923c);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 .hero-sub {
-    font-size: 0.97rem !important;
-    color: #94a3b8 !important;
-    max-width: 420px;
+    font-size: 0.95rem !important;
+    color: #8b7089 !important;
+    max-width: 440px;
     margin: 0 auto 0.5rem !important;
-    line-height: 1.6;
+    line-height: 1.7;
+}
+.hero-cats {
+    font-size: 1.4rem;
+    letter-spacing: 0.2em;
+    margin-top: 0.3rem;
+    opacity: 0.7;
 }
 
 /* ── Divider ── */
 .section-divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(99,102,241,0.3), rgba(13,148,136,0.3), transparent);
-    margin: 0.5rem 0 1.8rem;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(244,114,182,0.25), rgba(192,132,252,0.25), transparent);
+    margin: 0.3rem 0 1.8rem;
+    position: relative;
+}
+.section-divider::after {
+    content: '🐾';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.1rem;
+    background: #fffbfe;
+    padding: 0 0.6rem;
 }
 
 /* ── Step Badges ── */
@@ -165,32 +175,37 @@ html, body, [class*="css"] {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 22px; height: 22px;
+    width: 24px; height: 24px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #6366f1, #0d9488);
-    font-size: 0.7rem;
-    font-weight: 700;
+    background: linear-gradient(135deg, #f472b6, #c084fc);
+    font-size: 0.72rem;
+    font-weight: 800;
     color: #fff;
     flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(244,114,182,0.3);
 }
 .step-text {
     font-size: 0.82rem;
-    font-weight: 600;
-    color: #94a3b8;
+    font-weight: 700;
+    color: #9b7098;
     letter-spacing: 0.05em;
     text-transform: uppercase;
 }
+.step-emoji {
+    font-size: 0.95rem;
+}
 
+/* ── Form Card (Glassmorphism light) ── */
 div[data-testid="stForm"] {
-    background: rgba(15, 23, 42, 0.75) !important;
-    border: 1px solid rgba(99,102,241,0.18) !important;
-    border-radius: 20px !important;
+    background: rgba(255, 255, 255, 0.75) !important;
+    border: 1.5px solid rgba(244,114,182,0.2) !important;
+    border-radius: 24px !important;
     padding: 2rem 2rem 1.5rem !important;
-    backdrop-filter: blur(24px) !important;
+    backdrop-filter: blur(20px) !important;
     box-shadow:
-        0 4px 6px rgba(0,0,0,0.2),
-        0 20px 60px rgba(0,0,0,0.35),
-        inset 0 1px 0 rgba(255,255,255,0.05) !important;
+        0 4px 6px rgba(244,114,182,0.06),
+        0 16px 48px rgba(192,132,252,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.8) !important;
     margin-bottom: 1.25rem !important;
 }
 
@@ -198,54 +213,62 @@ div[data-testid="stTextInput"] label p,
 div[data-testid="stFileUploader"] label p,
 div[data-testid="stSelectbox"] label p,
 div[data-testid="stRadio"] label p {
-    color: #e2e8f0 !important;
-    font-weight: 600 !important;
+    color: #5c3d5a !important;
+    font-weight: 700 !important;
     font-size: 0.88rem !important;
     text-align: left !important;
     margin-bottom: 0.15rem !important;
 }
 
+/* ── Text Input ── */
 div[data-baseweb="input"] {
-    background: rgba(30, 41, 59, 0.8) !important;
-    border: 1px solid rgba(148, 163, 184, 0.25) !important;
-    border-radius: 12px !important;
-    transition: all 0.2s ease !important;
+    background: rgba(255,255,255,0.9) !important;
+    border: 1.5px solid rgba(244,114,182,0.25) !important;
+    border-radius: 14px !important;
+    transition: all 0.25s ease !important;
 }
 div[data-baseweb="input"] > div {
     background: transparent !important;
 }
 div[data-baseweb="input"] input {
-    color: #f1f5f9 !important;
-    -webkit-text-fill-color: #f1f5f9 !important;
+    color: #4a3347 !important;
+    -webkit-text-fill-color: #4a3347 !important;
     font-size: 0.95rem !important;
+    font-weight: 500 !important;
 }
 div[data-baseweb="input"] input::placeholder {
-    color: #475569 !important;
-    -webkit-text-fill-color: #475569 !important;
+    color: #c9a5c7 !important;
+    -webkit-text-fill-color: #c9a5c7 !important;
 }
 div[data-baseweb="input"]:focus-within {
-    border-color: #6366f1 !important;
-    box-shadow: 0 0 0 3px rgba(99,102,241,0.2) !important;
+    border-color: #f472b6 !important;
+    box-shadow: 0 0 0 3px rgba(244,114,182,0.15), 0 4px 12px rgba(244,114,182,0.1) !important;
 }
 
 /* ── File Uploader ── */
 section[data-testid="stFileUploadDropzone"] {
-    background: rgba(30, 41, 59, 0.6) !important;
-    border: 1.5px dashed rgba(99,102,241,0.4) !important;
-    border-radius: 14px !important;
+    background: rgba(252,228,236,0.3) !important;
+    border: 2px dashed rgba(244,114,182,0.35) !important;
+    border-radius: 16px !important;
     transition: all 0.25s ease !important;
 }
 section[data-testid="stFileUploadDropzone"]:hover {
-    border-color: #6366f1 !important;
-    background: rgba(99,102,241,0.08) !important;
-    box-shadow: 0 0 20px rgba(99,102,241,0.15) !important;
+    border-color: #f472b6 !important;
+    background: rgba(252,228,236,0.5) !important;
+    box-shadow: 0 0 20px rgba(244,114,182,0.1) !important;
 }
 section[data-testid="stFileUploadDropzone"] p,
 section[data-testid="stFileUploadDropzone"] span {
-    color: #94a3b8 !important;
+    color: #8b5e87 !important;
 }
 section[data-testid="stFileUploadDropzone"] small {
-    color: #64748b !important;
+    color: #b0879e !important;
+}
+section[data-testid="stFileUploadDropzone"] button {
+    color: #c2185b !important;
+    background: rgba(244,114,182,0.1) !important;
+    border: 1px solid rgba(244,114,182,0.3) !important;
+    border-radius: 10px !important;
 }
 
 /* ── Template Radio Cards ── */
@@ -253,73 +276,80 @@ div[data-testid="stRadio"] > div {
     gap: 0.6rem !important;
 }
 div[data-testid="stRadio"] > div > label {
-    background: rgba(30, 41, 59, 0.7) !important;
-    border: 1px solid rgba(148,163,184,0.15) !important;
-    border-radius: 14px !important;
+    background: rgba(255,255,255,0.8) !important;
+    border: 1.5px solid rgba(244,114,182,0.15) !important;
+    border-radius: 16px !important;
     padding: 0.85rem 1rem !important;
     cursor: pointer !important;
-    transition: all 0.2s ease !important;
+    transition: all 0.25s ease !important;
     width: 100% !important;
 }
 div[data-testid="stRadio"] > div > label:hover {
-    border-color: rgba(99,102,241,0.5) !important;
-    background: rgba(99,102,241,0.08) !important;
+    border-color: rgba(244,114,182,0.5) !important;
+    background: rgba(252,228,236,0.4) !important;
+    transform: translateY(-1px);
 }
 div[data-testid="stRadio"] > div > label[data-selected="true"],
 div[data-testid="stRadio"] > div > label:has(input:checked) {
-    border-color: rgba(99,102,241,0.7) !important;
-    background: rgba(99,102,241,0.12) !important;
-    box-shadow: 0 0 0 1px rgba(99,102,241,0.35) !important;
+    border-color: #f472b6 !important;
+    background: rgba(252,228,236,0.5) !important;
+    box-shadow: 0 0 0 2px rgba(244,114,182,0.15), 0 4px 12px rgba(244,114,182,0.1) !important;
 }
 div[data-testid="stRadio"] > div > label p {
-    color: #e2e8f0 !important;
+    color: #5c3d5a !important;
     font-size: 0.9rem !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     text-transform: none !important;
     letter-spacing: 0 !important;
 }
 
 /* ── Selectbox ── */
 div[data-baseweb="select"] > div {
-    background: rgba(30, 41, 59, 0.8) !important;
-    border: 1px solid rgba(148,163,184,0.25) !important;
-    border-radius: 12px !important;
-    color: #f1f5f9 !important;
+    background: rgba(255,255,255,0.9) !important;
+    border: 1.5px solid rgba(244,114,182,0.25) !important;
+    border-radius: 14px !important;
+    color: #4a3347 !important;
 }
 div[data-baseweb="select"] span {
-    color: #f1f5f9 !important;
+    color: #4a3347 !important;
 }
 div[data-baseweb="select"]:focus-within > div {
-    border-color: #6366f1 !important;
-    box-shadow: 0 0 0 3px rgba(99,102,241,0.2) !important;
+    border-color: #f472b6 !important;
+    box-shadow: 0 0 0 3px rgba(244,114,182,0.15) !important;
 }
 
 /* ── Submit Button ── */
 div[data-testid="stFormSubmitButton"] button {
     width: 100% !important;
-    background: linear-gradient(135deg, #6366f1 0%, #0d9488 100%) !important;
+    background: linear-gradient(135deg, #f472b6 0%, #c084fc 50%, #fb923c 100%) !important;
     color: #ffffff !important;
     border: none !important;
-    border-radius: 14px !important;
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
-    font-size: 1rem !important;
-    font-weight: 700 !important;
-    padding: 0.8rem 1rem !important;
+    border-radius: 16px !important;
+    font-family: 'Quicksand', sans-serif !important;
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    padding: 0.85rem 1rem !important;
     letter-spacing: 0.02em !important;
-    transition: all 0.25s ease !important;
-    box-shadow: 0 4px 20px rgba(99,102,241,0.4), 0 1px 0 rgba(255,255,255,0.1) inset !important;
+    transition: all 0.3s ease !important;
+    box-shadow:
+        0 4px 20px rgba(244,114,182,0.35),
+        0 1px 0 rgba(255,255,255,0.3) inset !important;
     margin-top: 0.5rem !important;
+    position: relative;
+    overflow: hidden;
 }
 div[data-testid="stFormSubmitButton"] button:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 30px rgba(99,102,241,0.55), 0 1px 0 rgba(255,255,255,0.1) inset !important;
+    transform: translateY(-2px) scale(1.01) !important;
+    box-shadow:
+        0 8px 30px rgba(244,114,182,0.45),
+        0 1px 0 rgba(255,255,255,0.3) inset !important;
 }
 div[data-testid="stFormSubmitButton"] button:active {
-    transform: translateY(0px) !important;
+    transform: translateY(0px) scale(0.99) !important;
 }
 div[data-testid="stFormSubmitButton"] button p {
     color: #ffffff !important;
-    font-weight: 700 !important;
+    font-weight: 800 !important;
 }
 
 /* ── Download Button ── */
@@ -328,88 +358,127 @@ div[data-testid="stDownloadButton"] {
 }
 div[data-testid="stDownloadButton"] button {
     width: 100% !important;
-    background: rgba(16, 185, 129, 0.12) !important;
-    color: #34d399 !important;
-    border: 1px solid rgba(52, 211, 153, 0.35) !important;
-    border-radius: 14px !important;
-    font-weight: 600 !important;
+    background: rgba(16, 185, 129, 0.08) !important;
+    color: #059669 !important;
+    border: 1.5px solid rgba(16,185,129,0.3) !important;
+    border-radius: 16px !important;
+    font-weight: 700 !important;
     font-size: 0.95rem !important;
     padding: 0.75rem 1rem !important;
-    transition: all 0.2s ease !important;
-    box-shadow: 0 4px 15px rgba(16,185,129,0.1) !important;
+    transition: all 0.25s ease !important;
+    box-shadow: 0 4px 15px rgba(16,185,129,0.08) !important;
 }
 div[data-testid="stDownloadButton"] button:hover {
-    background: rgba(16, 185, 129, 0.2) !important;
-    box-shadow: 0 6px 20px rgba(16,185,129,0.2) !important;
+    background: rgba(16, 185, 129, 0.15) !important;
+    box-shadow: 0 6px 20px rgba(16,185,129,0.15) !important;
     transform: translateY(-1px) !important;
 }
 div[data-testid="stDownloadButton"] button p {
-    color: #34d399 !important;
-    font-weight: 600 !important;
+    color: #059669 !important;
+    font-weight: 700 !important;
 }
 
 /* ── Alert Messages ── */
 div[data-testid="stAlert"] {
-    border-radius: 12px !important;
-    border-left-width: 3px !important;
+    border-radius: 14px !important;
+    border-left-width: 4px !important;
 }
 
 /* ── Caption / small text ── */
 div[data-testid="stCaptionContainer"] p {
-    color: #64748b !important;
+    color: #b0879e !important;
     font-size: 0.8rem !important;
     text-align: left !important;
 }
 
 /* ── Spinner ── */
 div[data-testid="stSpinner"] p {
-    color: #94a3b8 !important;
+    color: #8b5e87 !important;
 }
 
 /* ── Success result card ── */
 .result-card {
-    background: rgba(16,185,129,0.07);
-    border: 1px solid rgba(52,211,153,0.25);
-    border-radius: 16px;
-    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(52,211,153,0.08));
+    border: 1.5px solid rgba(16,185,129,0.2);
+    border-radius: 20px;
+    padding: 1.5rem 1.5rem;
     text-align: center;
     margin-bottom: 0.75rem;
 }
-.result-icon { font-size: 2.2rem; margin-bottom: 0.4rem; }
+.result-icon { font-size: 2.5rem; margin-bottom: 0.4rem; }
 .result-title {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #34d399;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #059669;
     margin-bottom: 0.2rem;
 }
-.result-sub { font-size: 0.83rem; color: #64748b; }
+.result-sub { font-size: 0.85rem; color: #8b7089; }
+.result-cat { font-size: 1.2rem; margin-top: 0.3rem; }
 
 /* ── Footer ── */
 .footer {
     text-align: center;
     padding: 2rem 0 1rem;
-    color: #334155;
-    font-size: 0.78rem;
+    color: #c9a5c7;
+    font-size: 0.8rem;
 }
-.footer span { color: #475569; }
+.footer span { color: #9b7098; font-weight: 600; }
+.footer-cats {
+    font-size: 1.3rem;
+    letter-spacing: 0.3em;
+    margin-bottom: 0.4rem;
+}
+
+/* ── Floating Cat Decorations ── */
+.floating-cat {
+    position: fixed;
+    font-size: 1.8rem;
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+    animation: floatCat 8s ease-in-out infinite;
+}
+.cat-1 { top: 10%; left: 5%; animation-delay: 0s; }
+.cat-2 { top: 30%; right: 3%; animation-delay: 2s; }
+.cat-3 { bottom: 20%; left: 8%; animation-delay: 4s; }
+.cat-4 { bottom: 10%; right: 6%; animation-delay: 6s; }
+@keyframes floatCat {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    25% { transform: translateY(-15px) rotate(5deg); }
+    50% { transform: translateY(-8px) rotate(-3deg); }
+    75% { transform: translateY(-12px) rotate(3deg); }
+}
 
 /* ── Hide Streamlit branding ── */
 #MainMenu { visibility: hidden; }
 footer { visibility: hidden; }
 header { visibility: hidden; }
 </style>
+
+<!-- Floating cat decorations -->
+<div class="floating-cat cat-1">🐱</div>
+<div class="floating-cat cat-2">😺</div>
+<div class="floating-cat cat-3">🐈</div>
+<div class="floating-cat cat-4">😸</div>
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 # HERO SECTION
 # ─────────────────────────────────────────────
-st.markdown("""
+if CAT_IMG_B64:
+    cat_img_html = f'<img src="data:image/png;base64,{CAT_IMG_B64}" class="cat-mascot" alt="Cat Mascot">'
+else:
+    cat_img_html = '<div style="font-size:5rem; margin-bottom:1rem;">🐱</div>'
+
+st.markdown(f"""
 <div class="hero-wrapper">
-    <div class="hero-icon-ring">🏨</div><br>
-    <div class="hero-badge">✦ Automated Excel Report</div>
+    {cat_img_html}
+    <br>
+    <div class="hero-badge">🐾 Automated Excel Report</div>
     <div class="hero-title">Hotel Report <span class="grad">Generator</span></div>
-    <p class="hero-sub">อัปโหลดไฟล์ Raw Data จากระบบ แล้วรับไฟล์รายงาน Excel สวยงาม พร้อมกราฟและสถิติ ภายในไม่กี่วินาที</p>
+    <p class="hero-sub">อัปโหลดไฟล์ Raw Data จากระบบ แล้วรับไฟล์รายงาน Excel สวยงาม พร้อมกราฟและสถิติ ภายในไม่กี่วินาที ≽^•⩊•^≼</p>
+    <div class="hero-cats">🐾 🐱 🐾</div>
 </div>
 <div class="section-divider"></div>
 """, unsafe_allow_html=True)
@@ -432,11 +501,12 @@ with st.form("report_form"):
     <div class="step-label">
         <div class="step-num">1</div>
         <div class="step-text">ชื่อโรงแรม</div>
+        <span class="step-emoji">🏨</span>
     </div>""", unsafe_allow_html=True)
     hotel_name = st.text_input(
         label="hotel_name_input",
         label_visibility="collapsed",
-        placeholder="เช่น My Resort Hotel & Spa"
+        placeholder="เช่น My Resort Hotel & Spa 🐱"
     )
 
     st.markdown("<div style='height:1.1rem'></div>", unsafe_allow_html=True)
@@ -446,6 +516,7 @@ with st.form("report_form"):
     <div class="step-label">
         <div class="step-num">2</div>
         <div class="step-text">ไฟล์ Raw Data (.xlsx)</div>
+        <span class="step-emoji">📁</span>
     </div>""", unsafe_allow_html=True)
     uploaded_file = st.file_uploader(
         label="file_uploader",
@@ -460,6 +531,7 @@ with st.form("report_form"):
     <div class="step-label">
         <div class="step-num">3</div>
         <div class="step-text">รูปแบบ Report</div>
+        <span class="step-emoji">📋</span>
     </div>""", unsafe_allow_html=True)
 
     selected_template = st.radio(
@@ -475,7 +547,7 @@ with st.form("report_form"):
     st.markdown("<div style='height:0.75rem'></div>", unsafe_allow_html=True)
 
     # Submit
-    submitted = st.form_submit_button("✨  สร้าง Report")
+    submitted = st.form_submit_button("🐾  สร้าง Report")
 
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -484,11 +556,11 @@ st.markdown('</div>', unsafe_allow_html=True)
 # ─────────────────────────────────────────────
 if submitted:
     if not hotel_name.strip():
-        st.error("⚠️ กรุณากรอกชื่อโรงแรม")
+        st.error("😿 กรุณากรอกชื่อโรงแรม")
     elif not uploaded_file:
-        st.error("⚠️ กรุณาเลือกไฟล์ Raw Data")
+        st.error("😿 กรุณาเลือกไฟล์ Raw Data")
     else:
-        with st.spinner("⚙️ กำลังประมวลผลข้อมูล..."):
+        with st.spinner("🐱 น้องแมวกำลังประมวลผลข้อมูล... รอแป๊บนะ"):
             try:
                 tmp_up  = os.path.join(os.getcwd(), "tmp_uploads")
                 tmp_out = os.path.join(os.getcwd(), "tmp_outputs")
@@ -510,22 +582,23 @@ if submitted:
                 # ── Result card
                 st.markdown(f"""
                 <div class="result-card">
-                    <div class="result-icon">✅</div>
+                    <div class="result-icon">😺✨</div>
                     <div class="result-title">สร้าง Report สำเร็จแล้ว!</div>
                     <div class="result-sub">{hotel_name} &nbsp;·&nbsp; {tpl_label}</div>
+                    <div class="result-cat">≽^•⩊•^≼ ♡</div>
                 </div>
                 """, unsafe_allow_html=True)
 
                 with open(output_path, "rb") as file:
                     st.download_button(
-                        label="📥  ดาวน์โหลดไฟล์ Report",
+                        label="📥  ดาวน์โหลดไฟล์ Report 🐾",
                         data=file,
                         file_name=f"report_{safe_name}.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
 
             except Exception as e:
-                st.error(f"❌ เกิดข้อผิดพลาด: {str(e)}")
+                st.error(f"😿 เกิดข้อผิดพลาด: {str(e)}")
             finally:
                 if os.path.exists(input_path):
                     try:
@@ -538,6 +611,8 @@ if submitted:
 # ─────────────────────────────────────────────
 st.markdown("""
 <div class="footer">
-    <span>Hotel Report Generator</span> &nbsp;·&nbsp; Powered by Python & openpyxl
+    <div class="footer-cats">🐱 🐾 🐱</div>
+    <span>Hotel Report Generator</span> &nbsp;·&nbsp; Made with ♡ by a cat lover
+    <br><small style="opacity:0.6">Powered by Python & openpyxl ≽^•⩊•^≼</small>
 </div>
 """, unsafe_allow_html=True)
