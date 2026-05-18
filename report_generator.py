@@ -54,6 +54,7 @@ def classify(d):
     if any(x in d_up for x in ['CHD EX BED','CHD EXT BED','CHD EXTRA BED','EXTRA CHD']): return 'chd_extra'
     if any(x in d_up for x in ['CHD SHARE BED','CHD SHARED','CHD SOFA','CHD UNDER']): return 'chd_shared'
     if 'EXTRA BED' in d_up: return 'adult_extra'
+    if any(x in d_up for x in ['ADT SOFA', 'SOFA BED', 'EXTRA PERSON']): return 'adult_extra'
     if any(x in d_up for x in ['TRANSFER','BABY COT','ADDTIONAL','ADDITIONAL',
                                  'LATE CHECK OUT','GALA DINNER','SURCHARGE','NEW YEAR',
                                  'MATTRESS']): return 'other_fee'
