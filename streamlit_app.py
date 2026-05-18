@@ -246,29 +246,44 @@ div[data-baseweb="input"]:focus-within {
 }
 
 /* ── File Uploader ── */
-section[data-testid="stFileUploadDropzone"] {
-    background: rgba(252,228,236,0.3) !important;
-    border: 2px dashed rgba(244,114,182,0.35) !important;
+[data-testid="stFileUploadDropzone"] {
+    background: rgba(252,228,236,0.4) !important;
+    border: 2px dashed rgba(244,114,182,0.5) !important;
     border-radius: 16px !important;
     transition: all 0.25s ease !important;
 }
-section[data-testid="stFileUploadDropzone"]:hover {
+[data-testid="stFileUploadDropzone"]:hover {
     border-color: #f472b6 !important;
-    background: rgba(252,228,236,0.5) !important;
+    background: rgba(252,228,236,0.6) !important;
     box-shadow: 0 0 20px rgba(244,114,182,0.1) !important;
 }
-section[data-testid="stFileUploadDropzone"] p,
-section[data-testid="stFileUploadDropzone"] span {
+[data-testid="stFileUploadDropzone"] p,
+[data-testid="stFileUploadDropzone"] span {
     color: #8b5e87 !important;
 }
-section[data-testid="stFileUploadDropzone"] small {
+[data-testid="stFileUploadDropzone"] small {
     color: #b0879e !important;
 }
-section[data-testid="stFileUploadDropzone"] button {
+[data-testid="stFileUploadDropzone"] button {
     color: #c2185b !important;
-    background: rgba(244,114,182,0.1) !important;
-    border: 1px solid rgba(244,114,182,0.3) !important;
+    background: rgba(244,114,182,0.15) !important;
+    border: 1px solid rgba(244,114,182,0.4) !important;
     border-radius: 10px !important;
+}
+
+/* ── Uploaded File Item ── */
+[data-testid="stUploadedFile"] {
+    background: rgba(255,255,255,0.8) !important;
+    border: 1px solid rgba(244,114,182,0.3) !important;
+    border-radius: 12px !important;
+}
+[data-testid="stUploadedFile"] div, 
+[data-testid="stUploadedFile"] span, 
+[data-testid="stUploadedFile"] p {
+    color: #4a3347 !important;
+}
+[data-testid="stUploadedFile"] svg {
+    stroke: #f472b6 !important;
 }
 
 /* ── Template Radio Cards ── */
