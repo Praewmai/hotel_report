@@ -75,8 +75,9 @@ html, body, [class*="css"] {
 }
 
 /* ── Remove default Streamlit top padding ── */
+.block-container,
 [data-testid="stMainBlockContainer"] {
-    padding-top: 2rem !important;
+    padding-top: 0rem !important;
     padding-bottom: 4rem !important;
     max-width: 680px !important;
 }
@@ -484,9 +485,9 @@ div[data-testid="stSpinner"] p {
 }
 
 /* ── Hide Streamlit branding ── */
-#MainMenu { visibility: hidden; }
-footer { visibility: hidden; }
-header { visibility: hidden; }
+#MainMenu { display: none !important; }
+footer { display: none !important; }
+header { display: none !important; }
 </style>
 
 <!-- Floating cat decorations -->
