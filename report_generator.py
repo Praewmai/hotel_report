@@ -297,10 +297,14 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
         
         chart.x_axis.delete = False
         chart.y_axis.delete = False
-        chart.legend = None # Remove legend to match reference image
+        if template_name == 'room_and_extra':
+            if chart.legend:
+                chart.legend.position = 'r'
+        else:
+            chart.legend = None # Remove legend to match reference image
         
-        # Consistent colors: 0:Total(Gold), 1:Shared(Green), 2:Extra(Orange)
-        series_colors = ['FFC000', '70AD47', 'ED7D31']
+        # Consistent colors to match reference image: 0:Total(Green), 1:Shared(Blue), 2:Extra(Yellow)
+        series_colors = ['70AD47', '5B9BD5', 'FFC000']
         for i, s in enumerate(chart.series):
             s.graphicalProperties.line.solidFill = series_colors[i % len(series_colors)]
             s.graphicalProperties.line.width = 25000 # ~2pt
