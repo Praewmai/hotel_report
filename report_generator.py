@@ -188,9 +188,10 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
         ]
         vc       = len(room_df)
         nights   = int(room_df['TotalNights'].sum())
+        base_nights = int(room_df['Nights'].sum())
         rc       = room_df['TotalCost'].sum()
         oc       = other_no_cancel['TotalCost'].sum()
-        avg      = round(nights/vc, 2) if vc else 0
+        avg      = round(base_nights/vc, 2) if vc else 0
         adt      = int(room_df['TADT'].sum())
         chd      = int(room_df['TCHD'].sum())
         adt_only = int((room_df['TCHD']==0).sum())
