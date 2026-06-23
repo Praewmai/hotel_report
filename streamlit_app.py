@@ -523,34 +523,52 @@ _template_descs   = {k: v['description'] for k, v in TEMPLATES.items()}
 # ─────────────────────────────────────────────
 # MAIN FORM CARD
 # ─────────────────────────────────────────────
+st.markdown("""
+<div style="text-align: center; margin-bottom: 0.5rem;">
+    <span style="font-weight: 700; color: #5b5e67; font-size: 0.9rem;">รูปแบบการประมวลผล</span>
+</div>
+""", unsafe_allow_html=True)
+
+report_mode = st.radio(
+    label="report_mode",
+    label_visibility="collapsed",
+    options=["🏨 รายงานรายโรงแรม", "📍 รายงานสรุปตาม Destination"],
+    horizontal=True
+)
+
+st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
 
 with st.form("report_form"):
 
-    # Step 1 — Hotel Name
-    st.markdown("""
-    <div class="step-label">
-        <div class="step-num">1</div>
-        <div class="step-text">ชื่อโรงแรม</div>
-        <span class="step-emoji">🏨</span>
-    </div>""", unsafe_allow_html=True)
-    hotel_name = st.text_input(
-        label="hotel_name_input",
-        label_visibility="collapsed",
-        placeholder="เช่น My Resort Hotel & Spa 🏨"
-    )
-
-    st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
-
-    # Destination Filter (Optional)
-    st.markdown("""
-    <div class="step-label">
-        <div class="step-text" style="font-size: 0.8rem; color: #7a7d87;">📍 ระบุ Destination (เฉพาะกรณีต้องการกรองรวมหลายโรงแรม)</div>
-    </div>""", unsafe_allow_html=True)
-    destination_filter = st.text_input(
-        label="destination_filter_input",
-        label_visibility="collapsed",
-        placeholder="เช่น Phuket (เว้นว่างไว้หากไม่ต้องการกรอง)"
-    )
+    if "Destination" not in report_mode:
+        # Step 1 — Hotel Name
+        st.markdown("""
+        <div class="step-label">
+            <div class="step-num">1</div>
+            <div class="step-text">ชื่อโรงแรม</div>
+            <span class="step-emoji">🏨</span>
+        </div>""", unsafe_allow_html=True)
+        hotel_name = st.text_input(
+            label="hotel_name_input",
+            label_visibility="collapsed",
+            placeholder="เช่น My Resort Hotel & Spa 🏨"
+        )
+        destination_filter = ""
+    else:
+        # Step 1 — Destination Name
+        st.markdown("""
+        <div class="step-label">
+            <div class="step-num">1</div>
+            <div class="step-text">ชื่อ Destination (รายงานสรุป)</div>
+            <span class="step-emoji">📍</span>
+        </div>""", unsafe_allow_html=True)
+        dest_input = st.text_input(
+            label="dest_name_input",
+            label_visibility="collapsed",
+            placeholder="เช่น Phuket (ระบบจะดึงและรวมข้อมูลเฉพาะภูเก็ต)"
+        )
+        hotel_name = dest_input
+        destination_filter = dest_input
 
     st.markdown("<div style='height:1.1rem'></div>", unsafe_allow_html=True)
 
@@ -599,7 +617,10 @@ st.markdown('</div>', unsafe_allow_html=True)
 # ─────────────────────────────────────────────
 if submitted:
     if not hotel_name.strip():
-        st.error("⚠️ กรุณากรอกชื่อโรงแรม")
+        if "Destination" not in report_mode:
+            st.error("⚠️ กรุณากรอกชื่อโรงแรม")
+        else:
+            st.error("⚠️ กรุณากรอกชื่อ Destination")
     elif not uploaded_file:
         st.error("⚠️ กรุณาเลือกไฟล์ Raw Data")
     else:
