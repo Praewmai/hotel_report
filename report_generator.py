@@ -108,7 +108,7 @@ def make_chart_title(year, total_nights):
     return Title(tx=Text(rich=rt), overlay=False)
 
 
-def generate_report(raw_path: str, hotel_name: str, output_path: str, template_name: str = DEFAULT_TEMPLATE):
+def generate_report(raw_path: str, hotel_name: str, output_path: str, template_name: str = DEFAULT_TEMPLATE, destination_filter: str = ""):
     """Main function: raw Excel → formatted report Excel
     
     Args:
@@ -141,6 +141,9 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
     df['Year']  = df['CheckIn'].dt.year.astype('Int64')
     df['Month'] = df['CheckIn'].dt.month.astype('Int64')
 
+    if destination_filter:
+        df = df[df['Dest'].astype(str).str.contains(destination_filter, case=False, na=False)]
+
     df['Type']     = df['Details'].apply(classify)
     df['RoomName'] = df.apply(lambda r: normalize_name(r['Details'], r['Type']), axis=1)
     years = sorted(df['Year'].dropna().unique())
@@ -163,7 +166,10 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
     rooms_data = {}
     for year in years:
         ydf = df[df['Year']==year]
-        summary = ydf.groupby(['Type','RoomName'])['TotalNights'].sum()
+        if destination_filter:
+            summary = ydf.groupby(['Type','Hotel'])['TotalNights'].sum()
+        else:
+            summary = ydf.groupby(['Type','RoomName'])['TotalNights'].sum()
         rows = []
         
         # Filter types based on template
@@ -332,7 +338,7 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
         # Room name table below chart
         room_excel_row = chart_bottom_row + 4
         c1 = ws_report.cell(room_excel_row, ROOM_COL)
-        c1.value = 'Room name'; c1.font = f_year_hdr; c1.fill = gold_fill; c1.border = thin_no_bottom()
+        c1.value = 'Hotel Name' if destination_filter else 'Room name'; c1.font = f_year_hdr; c1.fill = gold_fill; c1.border = thin_no_bottom()
         c2 = ws_report.cell(room_excel_row, ROOM_COL+1)
         c2.value = int(year); c2.font = f_year_hdr; c2.fill = gold_fill
         c2.alignment = al_c; c2.border = thin_no_bottom()

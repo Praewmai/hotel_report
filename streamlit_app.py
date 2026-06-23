@@ -1,4 +1,4 @@
-﻿import streamlit as st
+import streamlit as st
 import os
 import uuid
 import base64
@@ -539,6 +539,19 @@ with st.form("report_form"):
         placeholder="เช่น My Resort Hotel & Spa 🏨"
     )
 
+    st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
+
+    # Destination Filter (Optional)
+    st.markdown("""
+    <div class="step-label">
+        <div class="step-text" style="font-size: 0.8rem; color: #7a7d87;">📍 ระบุ Destination (เฉพาะกรณีต้องการกรองรวมหลายโรงแรม)</div>
+    </div>""", unsafe_allow_html=True)
+    destination_filter = st.text_input(
+        label="destination_filter_input",
+        label_visibility="collapsed",
+        placeholder="เช่น Phuket (เว้นว่างไว้หากไม่ต้องการกรอง)"
+    )
+
     st.markdown("<div style='height:1.1rem'></div>", unsafe_allow_html=True)
 
     # Step 2 — File Upload
@@ -604,7 +617,7 @@ if submitted:
                 with open(input_path, "wb") as f:
                     f.write(uploaded_file.getbuffer())
 
-                generate_report(input_path, hotel_name, output_path, template_name=selected_template)
+                generate_report(input_path, hotel_name, output_path, template_name=selected_template, destination_filter=destination_filter.strip())
 
                 safe_name    = hotel_name.replace(' ', '_')
                 tpl_label    = _template_labels.get(selected_template, selected_template)
