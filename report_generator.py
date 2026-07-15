@@ -52,7 +52,7 @@ DEFAULT_TEMPLATE = 'room_and_extra'
 def classify(d):
     d_up = str(d).upper().strip().rstrip('.')
     d_up = d_up.replace('CHILDREN', 'CHD').replace('CHILD', 'CHD').replace('KID', 'CHD')
-    if any(x in d_up for x in ['CHD EX BED','CHD EXT BED','CHD EXTRA BED','EXTRA CHD']): return 'chd_extra'
+    if any(x in d_up for x in ['CHD EX BED','CHD EXT BED','CHD EXTRA BED','EXTRA CHD','CHD SINGLE BED']): return 'chd_extra'
     if any(x in d_up for x in ['CHD SHARE BED','CHD SHARED','CHD SOFA','CHD UNDER']): return 'chd_shared'
     if 'EXTRA BED' in d_up: return 'adult_extra'
     if any(x in d_up for x in ['ADT SOFA', 'SOFA BED', 'EXTRA PERSON']): return 'adult_extra'
@@ -60,7 +60,8 @@ def classify(d):
         'TRANSFER', 'TRANFER', 'BABY COT', 'ADDTIONAL', 'ADDITIONAL',
         'LATE CHECK OUT', 'GALA DINNER', 'SURCHARGE', 'NEW YEAR',
         'MATTRESS', 'VAN', 'SPEED BOAT', 'SPEEDBOAT', 'LONG TAIL BOAT',
-        'HALF BOARD', 'FULL BOARD', 'CREDIT', 'MEAL', 'AIRPORT'
+        'HALF BOARD', 'FULL BOARD', 'CREDIT', 'MEAL', 'AIRPORT',
+        'CHD ABF', 'UPGRADE', 'MASSAGE', 'CHARGE'
     ]
     if any(x in d_up for x in other_keywords): return 'other_fee'
     return 'room'
