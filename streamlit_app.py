@@ -2,6 +2,9 @@ import streamlit as st
 import os
 import uuid
 import base64
+import importlib
+import report_generator
+importlib.reload(report_generator)
 from report_generator import generate_report, TEMPLATES, DEFAULT_TEMPLATE
 
 st.set_page_config(
