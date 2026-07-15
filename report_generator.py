@@ -257,10 +257,14 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
     ws_cost.column_dimensions['E'].width = 50   # Expand Hotel Name column in cost
 
     # ----- REPORT SHEET -----
-    c = ws_report['L3']
+    c = ws_report['A3']
     c.value = hotel_name
-    c.font = f_title
+    c.font = Font(name='Calibri', bold=True, size=36)
     c.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
+    try:
+        ws_report.merge_cells('A3:W3')
+    except Exception:
+        pass
 
     c = ws_report['AA4']
     c.value = get_update_date()
@@ -374,8 +378,9 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
     # ----- COST SHEET -----
     c = ws_cost['E7']
     c.value = hotel_name
-    c.font = Font(name='Calibri', bold=True, size=16)
+    c.font = Font(name='Calibri', bold=True, size=36)
     c.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
+    ws_cost.merge_cells('E7:P7')
 
     c = ws_cost['O8']
     c.value = get_update_date(); c.font = f_update
