@@ -1,5 +1,6 @@
 import pandas as pd
 import openpyxl
+import re
 from datetime import datetime
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.chart import LineChart, BarChart, Reference
@@ -51,19 +52,29 @@ DEFAULT_TEMPLATE = 'room_and_extra'
 
 def classify(d):
     d_up = str(d).upper().strip().rstrip('.')
-    d_up = d_up.replace('CHILDREN', 'CHD').replace('CHILD', 'CHD').replace('KID', 'CHD')
-    if any(x in d_up for x in ['CHD EX BED','CHD EXT BED','CHD EXTRA BED','EXTRA CHD','CHD SINGLE BED']): return 'chd_extra'
-    if any(x in d_up for x in ['CHD SHARE','CHD SHARED','CHD SHARING','CHD SOFA','CHD UNDER']): return 'chd_shared'
-    if 'EXTRA BED' in d_up: return 'adult_extra'
-    if any(x in d_up for x in ['ADT SOFA', 'SOFA BED', 'EXTRA PERSON', 'EXTRA PAX']): return 'adult_extra'
+    
+    # 1. Check for child-related costs
+    if re.search(r'\b(CHD|CHILD|CHILDREN|KID|KIDS)\b', d_up):
+        if re.search(r'\b(SHARE|SHARED|SHARING|SOFA|UNDER|NO BED)\b', d_up):
+            return 'chd_shared'
+        else:
+            return 'chd_extra'
+            
+    # 2. Check for adult extra beds
+    if re.search(r'\b(EXTRA BED|EX BED|EXTRA PERSON|EXTRA PAX|ADT SOFA|SOFA BED)\b', d_up):
+        return 'adult_extra'
+        
+    # 3. Check for general other fees
     other_keywords = [
         'TRANSFER', 'TRANFER', 'BABY COT', 'ADDTIONAL', 'ADDITIONAL',
         'LATE CHECK OUT', 'GALA DINNER', 'SURCHARGE', 'NEW YEAR',
         'MATTRESS', 'VAN', 'SPEED BOAT', 'SPEEDBOAT', 'LONG TAIL BOAT',
         'HALF BOARD', 'FULL BOARD', 'CREDIT', 'MEAL', 'AIRPORT',
-        'CHD ABF', 'UPGRADE', 'MASSAGE', 'CHARGE', 'GUARANTEE'
+        'UPGRADE', 'MASSAGE', 'CHARGE', 'GUARANTEE'
     ]
     if any(x in d_up for x in other_keywords): return 'other_fee'
+    
+    # 4. Default to room
     return 'room'
 
 
