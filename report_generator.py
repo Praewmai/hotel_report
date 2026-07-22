@@ -253,16 +253,17 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
 
     # Enforce width for Room Name column and wrap text
     ws_report.column_dimensions[openpyxl.utils.cell.get_column_letter(ROOM_COL)].width = 50
-    ws_report.column_dimensions['L'].width = 50 # Expand Hotel Name column in report
+    ws_report.column_dimensions['M'].width = 8.5
+    ws_report.column_dimensions['W'].width = 8.5
     ws_cost.column_dimensions['E'].width = 50   # Expand Hotel Name column in cost
 
     # ----- REPORT SHEET -----
-    c = ws_report['A3']
+    c = ws_report['K3']
     c.value = hotel_name
     c.font = Font(name='Calibri', bold=True, size=36)
     c.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
     try:
-        ws_report.merge_cells('A3:W3')
+        ws_report.merge_cells('K3:T3')
     except Exception:
         pass
 
