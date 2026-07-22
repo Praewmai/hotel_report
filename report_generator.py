@@ -11,6 +11,8 @@ from openpyxl.chart.title import Title
 from openpyxl.drawing.spreadsheet_drawing import AnchorMarker, TwoCellAnchor
 from openpyxl.chart.label import DataLabelList
 from openpyxl.chart.shapes import GraphicalProperties
+from openpyxl.chart.marker import Marker, DataPoint
+from openpyxl.drawing.line import LineProperties
 import os
 
 MONTHS = {1:'JANUARY',2:'FEBRUARY',3:'MARCH',4:'APRIL',5:'MAY',6:'JUNE',
@@ -254,8 +256,12 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
     # Enforce width for Room Name column and wrap text
     ws_report.column_dimensions[openpyxl.utils.cell.get_column_letter(ROOM_COL)].width = 50
     ws_report.column_dimensions['M'].width = 8.5
+    ws_report.column_dimensions['S'].width = 8.5
     ws_report.column_dimensions['W'].width = 8.5
-    ws_cost.column_dimensions['E'].width = 50   # Expand Hotel Name column in cost
+    
+    ws_cost_widths = {'D':8, 'E':12, 'F':14, 'G':16, 'H':20, 'I':20, 'J':14, 'K':8, 'L':8, 'M':20, 'N':8, 'O':20, 'P':8}
+    for c_letter, w in ws_cost_widths.items():
+        ws_cost.column_dimensions[c_letter].width = w
 
     # ----- REPORT SHEET -----
     c = ws_report['K3']
@@ -267,7 +273,7 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
     except Exception:
         pass
 
-    c = ws_report['AA4']
+    c = ws_report['T4']
     c.value = get_update_date()
     c.font = f_update
 
@@ -327,6 +333,11 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
         
         chart.x_axis.delete = False
         chart.y_axis.delete = False
+        chart.y_axis.tickLblPos = "none"
+        chart.y_axis.spPr = GraphicalProperties(ln=LineProperties(noFill=True))
+        chart.roundedCorners = True
+        chart.graphicalProperties = GraphicalProperties(solidFill='E7E6E6')
+        
         if template_name == 'room_and_extra':
             if chart.legend:
                 chart.legend.position = 'r'
@@ -339,6 +350,15 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
             s.graphicalProperties.line.solidFill = series_colors[i % len(series_colors)]
             s.graphicalProperties.line.width = 25000 # ~2pt
             s.smooth = False
+            s.marker = Marker(symbol='circle', size=15)
+            
+            if i == 0:
+                pt_colors = ['5B9BD5', 'ED7D31', '70AD47', 'FFC000', '44546A', '8FAADC', 'F4B084']
+                for pt_idx in range(len(months)):
+                    pt = DataPoint(idx=pt_idx)
+                    pt.marker = Marker(symbol='circle', size=15)
+                    pt.marker.graphicalProperties.solidFill = pt_colors[pt_idx % len(pt_colors)]
+                    s.dPt.append(pt)
             
             # Data Labels
             lbl = DataLabelList()
@@ -348,8 +368,12 @@ def generate_report(raw_path: str, hotel_name: str, output_path: str, template_n
             lbl.showLegendKey  = False
             lbl.showPercent    = False
             lbl.showBubbleSize = False
-            # Position labels on top
-            lbl.dLblPos        = 't'
+            # Position labels inside marker
+            lbl.dLblPos        = 'ctr'
+            
+            cp = CharacterProperties(solidFill='FFFFFF')
+            lbl.txPr = ChartRichText(p=[Paragraph(pPr=ParagraphProperties(defRPr=cp), endParaRPr=cp)])
+            
             s.dLbls = lbl
         
         anchor = TwoCellAnchor()
