@@ -74,7 +74,7 @@ def classify(d):
         'HALF BOARD', 'FULL BOARD', 'CREDIT', 'MEAL', 'AIRPORT',
         'UPGRADE', 'MASSAGE', 'CHARGE', 'GUARANTEE', 'DINNER', 'FOOD',
         'COMPUL', 'COMPULSORY', 'GALA', 'BOAT', 'CONECING', 'TRAVELLIRI',
-        'BENEFIT', 'LATE CHECKOUT'
+        'BENEFIT', 'LATE CHECKOUT', 'BALLOON', 'DECORATION', 'EARLY'
     ]
     if any(x in d_up for x in other_keywords): return 'other_fee'
     
