@@ -55,8 +55,8 @@ DEFAULT_TEMPLATE = 'room_and_extra'
 def classify(d):
     d_up = str(d).upper().strip().rstrip('.')
     
-    # 1. Check for child-related costs
-    if re.search(r'\b(CHD|CHILD|CHILDREN|KID|KIDS)\b', d_up):
+    # 1. Check for child-related costs (including standalone 'sharing bed' which implies child)
+    if re.search(r'\b(CHD|CHILD|CHILDREN|KID|KIDS)\b', d_up) or re.search(r'\b(SHARE BED|SHARED BED|SHARING BED)\b', d_up):
         if re.search(r'\b(SHARE|SHARED|SHARING|SOFA|UNDER|NO BED)\b', d_up):
             return 'chd_shared'
         else:
