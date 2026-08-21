@@ -63,7 +63,7 @@ def classify(d):
             return 'chd_extra'
             
     # 2. Check for adult extra beds
-    if re.search(r'\b(EXTRA BED|EX BED|EXTRA PERSON|EXTRA PAX|ADT SOFA|SOFA BED)\b', d_up):
+    if re.search(r'\b(EXTRA BED|EX BED|EXT BED|EXT\+BED|EXTRA PERSON|EXTRA PAX|ADT SOFA|SOFA BED)\b', d_up):
         return 'adult_extra'
         
     # 3. Check for general other fees
