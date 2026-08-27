@@ -76,7 +76,9 @@ def classify(d):
         'COMPUL', 'COMPULSORY', 'GALA', 'BOAT', 'CONECING', 'TRAVELLIRI',
         'BENEFIT', 'LATE CHECKOUT', 'BALLOON', 'DECORATION', 'EARLY',
         'WINE', 'SPARKLING', 'SPARKING', 'DRINK', 'BEVERAGE',
-        'WELCOME', 'AMENITY', 'FRUIT', 'BASKET', 'CAKE', 'FLOWER'
+        'WELCOME', 'AMENITY', 'FRUIT', 'BASKET', 'CAKE', 'FLOWER',
+        'LUNCH', 'BRUNCH', 'BREAKFAST', 'BUFFET',
+        'SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'
     ]
     if any(x in d_up for x in other_keywords): return 'other_fee'
     
